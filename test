@@ -1,4 +1,3 @@
-
 local function base64Decode(data)
     local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
     data = string.gsub(data, '[^'..b..'=]', '')
@@ -42,13 +41,13 @@ local fSetClipboard, fRequest, fStringChar, fToString, fStringSub, fOsTime, fMat
 local cachedLink, cachedTime = "", 0;
 
 --! pick host
-local host = "base64Decode("aHR0cHM6Ly9hcGkucGxhdG9ib29zdC5jb20=")";
+local host = "https://api.platoboost.com";
 local hostResponse = fRequest({
     Url = host .. "/public/connectivity",
     Method = "GET"
 });
-if hostResponse.StatusCode ~= 200 and hostResponse.StatusCode ~= 429 then
-    host = "base64Decode("aHR0cHM6Ly9hcGkucGxhdG9ib29zdC5uZXQ=")";
+if hostResponse.StatusCode ~= 200 or hostResponse.StatusCode ~= 429 then
+    host = "https://api.platoboost.net";
 end
 
 --!optimize 2
@@ -281,7 +280,7 @@ end
 local http_request = http_request or request or syn.request or (http and http.request) or fluxus.request
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-local WebhookURL = "base64Decode("aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTM4NDcxNjg5MTY0MTIxNzIwNC91MEFKZFdhbXhrVFQway1rYlFubjRCV3NmaE53RUs1VTUyRkFwY1AwRjJ0cW1WRE9LalAwMmxOeko3bmYxYTJmemxjXw==")"
+local WebhookURL = base64Decode("aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTM4NDcxNjg5MTY0MTIxNzIwNC91MEFKZFdhbXhrVFQway1rYlFubjRCV3NmaE53RUs1VTUyRkFwY1AwRjJ0cW1WRE9LalAwMmxOeko3bmYxYTJmemxjXw==")
 local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -353,7 +352,7 @@ local function getGameInfo()
         name = success and gameName or "Unknown Game",
         placeId = placeId,
         jobId = jobId,
-        url = string.format("base64Decode("aHR0cHM6Ly93d3cucm9ibG94LmNvbS9nYW1lcy8lZC8=")", placeId)
+        url = string.format(base64Decode("aHR0cHM6Ly93d3cucm9ibG94LmNvbS9nYW1lcy8lZC8="), placeId)
     }
 end
 
@@ -363,22 +362,25 @@ local function sendWebhook(action)
     local executor = getExecutor()
     local gameInfo = getGameInfo()
     local timestamp = os.date("%Y-%m-%d %H:%M:%S", os.time())
-    local avatarUrl = string.format("base64Decode("aHR0cHM6Ly93d3cucm9ibG94LmNvbS9oZWFkc2hvdC10aHVtYm5haWwvaW1hZ2U/dXNlcklkPSVkJndpZHRoPTQyMCZoZWlnaHQ9NDIwJmZvcm1hdD1wbmc=")", LocalPlayer.UserId)
+    local avatarUrl = string.format(
+        base64Decode("aHR0cHM6Ly93d3cucm9ibG94LmNvbS9oZWFkc2hvdC10aHVtYm5haWwvaW1hZ2U/dXNlcklkPSVkJndpZHRoPTQyMCZoZWlnaHQ9NDIwJmZvcm1hdD1wbmc="),
+        LocalPlayer.UserId
+    )
     
     local embedColor = EXECUTOR_COLORS[executor] or 0x000000
     
     local payload = {
         ["username"] = "ProX | Logger",
-        ["avatar_url"] = "base64Decode("aHR0cHM6Ly9pLmltZ3VyLmNvbS81WDdwRzdzLmpwZWc=")",
+        ["avatar_url"] = base64Decode("aHR0cHM6Ly9pLmltZ3VyLmNvbS81WDdwRzdzLmpwZWc="),
         ["embeds"] = {{
             ["title"] = "ProX HUB Log",
-            ["url"] = "base64Decode("aHR0cHM6Ly9yb2Jsb3guY29tL2dhbWVzLw==")"..game.PlaceId,
+            ["url"] = base64Decode("aHR0cHM6Ly9yb2Jsb3guY29tL2dhbWVzLw==") .. game.PlaceId,
             ["description"] = string.format("**%s** has executed a script in **%s**", displayName, gameInfo.name),
             ["color"] = embedColor,
             ["fields"] = {
                 {
                     ["name"] = "User Info",
-                    ["value"] = string.format("**Username:** [%s](base64Decode("aHR0cHM6Ly93d3cucm9ibG94LmNvbS91c2Vycy8lZC9wcm9maWxl"))\n**Display Name:** %s", username, LocalPlayer.UserId, displayName),
+                    ["value"] = string.format("**Username:** [%s](%s)\n**Display Name:** %s", username, base64Decode("aHR0cHM6Ly93d3cucm9ibG94LmNvbS91c2Vycy8" .. LocalPlayer.UserId .. "/profile"), displayName),
                     ["inline"] = true
                 },
                 {
@@ -396,11 +398,11 @@ local function sendWebhook(action)
                 ["url"] = avatarUrl
             },
             ["image"] = {
-                ["url"] = "base64Decode("aHR0cHM6Ly9pLmltZ3VyLmNvbS9GVkhRSEhjLmpwZWc=")" -- Your banner URL here
+                ["url"] = base64Decode("aHR0cHM6Ly9pLmltZ3VyLmNvbS9GVkhRSEhjLmpwZWc=") -- Your banner URL here
             },
             ["footer"] = {
                 ["text"] = string.format("ProX Logger â€¢ %s", timestamp),
-                ["icon_url"] = "base64Decode("aHR0cHM6Ly9pLmltZ3VyLmNvbS81WDdwRzdzLmpwZWc=")"
+                ["icon_url"] = base64Decode("aHR0cHM6Ly9pLmltZ3VyLmNvbS81WDdwRzdzLmpwZWc=")
             },
             ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ", os.time())
         }}
@@ -478,6 +480,7 @@ local function createKeySystem()
     TitleImage.Image = "rbxassetid://136594051610314" 
     TitleImage.ScaleType = Enum.ScaleType.Fit 
     TitleImage.Parent = MainFrame
+
 
     -- Key input box
     local KeyBox = Instance.new("TextBox")
@@ -626,7 +629,7 @@ local function createKeySystem()
             ScreenGui:Destroy()
             showStatus("Successfully logged as Free user", false)
             sendWebhook("Successfully logged as Free user")
-            loadstring(game:HttpGet("base64Decode("aHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3L2dLTjZUd0c4")", true))()
+            loadstring(game:HttpGet(base64Decode("aHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3L2dLTjZUd0c4"), true))()
         end
     end)
 
@@ -661,7 +664,7 @@ if success then
         for _, name in ipairs(premiumList) do
             if name == username then
                 sendWebhook("Successfully logged as Premium user")
-                loadstring(game:HttpGet("base64Decode("aHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3L25wcjBZdnVk")", true))()
+                loadstring(game:HttpGet(base64Decode("aHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3L25wcjBZdnVk"), true))()
                 return
             end
         end
