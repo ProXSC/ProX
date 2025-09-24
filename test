@@ -431,28 +431,30 @@ local username = player.Name
 
 local PREMIUM_URL = base64Decode("aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1Byb1hTQy9Qcm9YRGF0YS9yZWZzL2hlYWRzL21haW4vUHJlbWl1bVVzZXJzLmx1YQ==")
 
-local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
-local PlayerGui = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-local isMobile = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
-local username = game.Players.LocalPlayer.Name
-
--- Define colors for animation
-local accentColor = Color3.fromRGB(88, 101, 242) -- Discord blue
-local secondaryColor = Color3.fromRGB(70, 70, 80)
-local mainBackgroundColor = Color3.fromRGB(30, 30, 35)
-
 local function createKeySystem()
-    -- Create main screen GUI
+    local UserInputService = game:GetService("UserInputService")
+    local TweenService = game:GetService("TweenService")
+    local PlayerGui = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    local isMobile = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
+    local username = game.Players.LocalPlayer.Name
+
+    local accentColor = Color3.fromRGB(88, 101, 242)
+    local secondaryColor = Color3.fromRGB(70, 70, 80)
+    local mainBackgroundColor = Color3.fromRGB(30, 30, 35)
+
+    local existingGui = PlayerGui:FindFirstChild("ProXKeySystem")
+    if existingGui then
+        existingGui:Destroy()
+    end
+
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "ProXKeySystem"
     ScreenGui.ResetOnSpawn = false
     ScreenGui.Parent = PlayerGui
 
-    -- New main container frame
     local MainContainer = Instance.new("Frame")
     MainContainer.Name = "MainContainer"
-    MainContainer.Size = UDim2.new(0, 300, 0, 350) -- Adjusted size
+    MainContainer.Size = UDim2.new(0, 300, 0, 350)
     MainContainer.Position = UDim2.new(0.5, 0, 0.5, 0)
     MainContainer.AnchorPoint = Vector2.new(0.5, 0.5)
     MainContainer.BackgroundTransparency = 1
@@ -618,7 +620,7 @@ local function createKeySystem()
     StatusFrame.Name = "StatusFrame"
     StatusFrame.Size = UDim2.new(1, 0, 0, 35)
     StatusFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-    StatusFrame.Position = UDim2.new(0.5, 0, 0.87, 0) -- Lowered the position to reduce the gap
+    StatusFrame.Position = UDim2.new(0.5, 0, 0.77, 0) -- Lowered the position to reduce the gap
     StatusFrame.BackgroundColor3 = mainBackgroundColor
     StatusFrame.BorderSizePixel = 0
     StatusFrame.ClipsDescendants = true
@@ -770,36 +772,46 @@ local function createKeySystem()
 end
 
 -- Fetch and check premium access
+-- Add this line to the top of your script if you haven't already
+local username = game.Players.LocalPlayer.Name
+
+-- Your improved premium check function
 local function checkPremium()
-    local premiumUrl = "aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1Byb1hTQy9Qcm9YRGF0YS9tYWluL1ByZW1pdW1Vc2Vycy5sdWE="
+    -- Check for an existing UI and destroy it
+    local existingGui = PlayerGui:FindFirstChild("ProXKeySystem")
+    if existingGui then
+        existingGui:Destroy()
+    end
+
+    local premiumUrl = "https://raw.githubusercontent.com/ProXSC/ProXData/main/PremiumList"
     local success, response = pcall(function()
-        return game:HttpGet(base64Decode(premiumUrl), true)
+        return game:HttpGet(premiumUrl, true)
     end)
 
-    if success then
-        local listSuccess, premiumList = pcall(function()
-            local list = {}
-            for line in string.gmatch(response, "([^%s]+)") do
-                table.insert(list, line)
-            end
-            return list
-        end)
+    if not success or not response then
+        -- Fallback to the key system if there's any error fetching the list
+        createKeySystem()
+        return
+    end
 
-        if listSuccess and typeof(premiumList) == "table" then
-            for _, name in ipairs(premiumList) do
-                if name == username then
-                    sendWebhook("Successfully logged as Premium user")
-                    loadstring(game:HttpGet(base64Decode("aHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3L25wcjBZdnVk"), true))()
-                    return
-                end
-            end
-            createKeySystem()
-        else
-            createKeySystem()
+    local isPremium = false
+    -- Iterate through each line to check for the username
+    for line in string.gmatch(response, "[^\n]+") do
+        if line:match("^" .. username .. "$") then
+            isPremium = true
+            break
         end
+    end
+
+    if isPremium then
+        -- Load the premium script if the user is in the list
+        sendWebhook("Successfully logged as Premium user")
+        loadstring(game:HttpGet(base64Decode("aHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3L25wcjBZdnVk"), true))()
     else
+        -- Show the key system if the user is not in the list
         createKeySystem()
     end
 end
 
+-- Run the check when the script starts
 checkPremium()
