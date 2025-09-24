@@ -42,13 +42,13 @@ local fSetClipboard, fRequest, fStringChar, fToString, fStringSub, fOsTime, fMat
 local cachedLink, cachedTime = "", 0;
 
 --! pick host
-local host = "base64Decode("aHR0cHM6Ly9hcGkucGxhdG9ib29zdC5jb20=")";
+local host = "https://api.platoboost.com";
 local hostResponse = fRequest({
     Url = host .. "/public/connectivity",
     Method = "GET"
 });
-if hostResponse.StatusCode ~= 200 and hostResponse.StatusCode ~= 429 then
-    host = "base64Decode("aHR0cHM6Ly9hcGkucGxhdG9ib29zdC5uZXQ=")";
+if hostResponse.StatusCode ~= 200 or hostResponse.StatusCode ~= 429 then
+    host = "https://api.platoboost.net";
 end
 
 --!optimize 2
