@@ -452,7 +452,7 @@ local function createKeySystem()
     -- New main container frame
     local MainContainer = Instance.new("Frame")
     MainContainer.Name = "MainContainer"
-    MainContainer.Size = UDim2.new(0, 300, 0, 300)
+    MainContainer.Size = UDim2.new(0, 300, 0, 350) -- Adjusted size
     MainContainer.Position = UDim2.new(0.5, 0, 0.5, 0)
     MainContainer.AnchorPoint = Vector2.new(0.5, 0.5)
     MainContainer.BackgroundTransparency = 1
@@ -461,8 +461,8 @@ local function createKeySystem()
     -- Main frame
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
-    MainFrame.Size = UDim2.new(1, 0, 0, 200)
-    MainFrame.Position = UDim2.new(0.5, 0, 0.35, 0)
+    MainFrame.Size = UDim2.new(1, 0, 0, 250) -- Increased height
+    MainFrame.Position = UDim2.new(0.5, 0, 0.4, 0) -- Adjusted position
     MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
     MainFrame.BackgroundColor3 = mainBackgroundColor
     MainFrame.BorderSizePixel = 0
@@ -473,7 +473,7 @@ local function createKeySystem()
     local AnimatedStroke = Instance.new("UIStroke")
     AnimatedStroke.Name = "AnimatedStroke"
     AnimatedStroke.Color = Color3.fromRGB(255, 255, 255)
-    AnimatedStroke.Thickness = 2
+    AnimatedStroke.Thickness = 3
     AnimatedStroke.Transparency = 0.5
     AnimatedStroke.Parent = MainFrame
 
@@ -481,8 +481,8 @@ local function createKeySystem()
     local GlowStroke = Instance.new("UIStroke")
     GlowStroke.Name = "GlowStroke"
     GlowStroke.Color = accentColor
-    GlowStroke.Thickness = 4
-    GlowStroke.Transparency = 1
+    GlowStroke.Thickness = 5
+    GlowStroke.Transparency = 0.5
     GlowStroke.Parent = MainFrame
 
     -- Corner rounding for MainFrame
@@ -508,7 +508,7 @@ local function createKeySystem()
     -- Drop shadow
     local Shadow = Instance.new("ImageLabel")
     Shadow.Name = "Shadow"
-    Shadow.Image = "rbxassetid://1316045217"
+    Shadow.Image = "rbxassetid://136594051610314"
     Shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
     Shadow.ImageTransparency = 0.8
     Shadow.ScaleType = Enum.ScaleType.Slice
@@ -526,7 +526,7 @@ local function createKeySystem()
     TitleImage.AnchorPoint = Vector2.new(0.5, 0.5)
     TitleImage.Position = UDim2.new(0.5, 0, 0.2, 0)
     TitleImage.BackgroundTransparency = 1
-    TitleImage.Image = "rbxassetid://136594051610314"
+    TitleImage.Image = "rbxassetid://13659405161"
     TitleImage.ScaleType = Enum.ScaleType.Fit
     TitleImage.Parent = MainFrame
 
@@ -535,7 +535,7 @@ local function createKeySystem()
     KeyBox.Name = "KeyBox"
     KeyBox.Size = UDim2.new(0.8, 0, 0, 40)
     KeyBox.AnchorPoint = Vector2.new(0.5, 0.5)
-    KeyBox.Position = UDim2.new(0.5, 0, 0.55, 0)
+    KeyBox.Position = UDim2.new(0.5, 0, 0.45, 0)
     KeyBox.BackgroundColor3 = Color3.fromRGB(40, 40, 45)
     KeyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
     KeyBox.PlaceholderText = "Input key..."
@@ -555,7 +555,7 @@ local function createKeySystem()
     local ButtonFrame = Instance.new("Frame")
     ButtonFrame.Name = "ButtonFrame"
     ButtonFrame.Size = UDim2.new(0.8, 0, 0, 35)
-    ButtonFrame.Position = UDim2.new(0.5, 0, 0.77, 0)
+    ButtonFrame.Position = UDim2.new(0.5, 0, 0.65, 0)
     ButtonFrame.AnchorPoint = Vector2.new(0.5, 0.5)
     ButtonFrame.BackgroundTransparency = 1
     ButtonFrame.Parent = MainFrame
@@ -600,7 +600,7 @@ local function createKeySystem()
     DiscordButton.Name = "DiscordButton"
     DiscordButton.Size = UDim2.new(0.8, 0, 0, 35)
     DiscordButton.AnchorPoint = Vector2.new(0.5, 0.5)
-    DiscordButton.Position = UDim2.new(0.5, 0, 0.9, 0)
+    DiscordButton.Position = UDim2.new(0.5, 0, 0.85, 0)
     DiscordButton.BackgroundColor3 = accentColor
     DiscordButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     DiscordButton.Text = "Join Discord"
@@ -618,7 +618,7 @@ local function createKeySystem()
     StatusFrame.Name = "StatusFrame"
     StatusFrame.Size = UDim2.new(1, 0, 0, 35)
     StatusFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-    StatusFrame.Position = UDim2.new(0.5, 0, 0.9, 0)
+    StatusFrame.Position = UDim2.new(0.5, 0, 0.77, 0) -- Lowered the position to reduce the gap
     StatusFrame.BackgroundColor3 = mainBackgroundColor
     StatusFrame.BorderSizePixel = 0
     StatusFrame.ClipsDescendants = true
@@ -628,15 +628,15 @@ local function createKeySystem()
     local StatusAnimatedStroke = Instance.new("UIStroke")
     StatusAnimatedStroke.Name = "AnimatedStroke"
     StatusAnimatedStroke.Color = Color3.fromRGB(255, 255, 255)
-    StatusAnimatedStroke.Thickness = 2
+    StatusAnimatedStroke.Thickness = 3
     StatusAnimatedStroke.Transparency = 0.5
     StatusAnimatedStroke.Parent = StatusFrame
 
     local StatusGlowStroke = Instance.new("UIStroke")
     StatusGlowStroke.Name = "GlowStroke"
     StatusGlowStroke.Color = accentColor
-    StatusGlowStroke.Thickness = 4
-    StatusGlowStroke.Transparency = 1
+    StatusGlowStroke.Thickness = 5
+    StatusGlowStroke.Transparency = 0.5
     StatusGlowStroke.Parent = StatusFrame
     
     -- Corner rounding for the new status frame
@@ -689,7 +689,7 @@ local function createKeySystem()
 
     local function animateButtonPop(button)
         local tweenInfoIn = TweenInfo.new(0.1, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-        local tweenInfoOut = TweenInfo.new(0.5, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out) -- Use Elastic for a bounce effect
+        local tweenInfoOut = TweenInfo.new(0.2, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out)
         
         local originalSize = button.Size
 
@@ -715,20 +715,11 @@ local function createKeySystem()
         StatusLabel.TextColor3 = isError and Color3.fromRGB(255, 80, 80) or Color3.fromRGB(80, 255, 80)
         StatusLabel.Visible = true
 
-        StatusFrame.BackgroundTransparency = 1
-        StatusLabel.TextTransparency = 1
+        StatusFrame.BackgroundTransparency = 0 -- Reverted to a static color
+        StatusLabel.TextTransparency = 0 -- No longer animating transparency
         
-        local tweenIn = TweenService:Create(StatusFrame, TweenInfo.new(0.3), {BackgroundTransparency = 0})
-        local textTweenIn = TweenService:Create(StatusLabel, TweenInfo.new(0.3), {TextTransparency = 0})
-        
-        tweenIn:Play()
-        textTweenIn:Play()
-
         delay(3, function()
-            local tweenOut = TweenService:Create(StatusFrame, TweenInfo.new(0.3), {BackgroundTransparency = 1})
-            local textTweenOut = TweenService:Create(StatusLabel, TweenInfo.new(0.3), {TextTransparency = 1})
-            tweenOut:Play()
-            textTweenOut:Play()
+            StatusLabel.Visible = false
         end)
     end
 
