@@ -461,7 +461,7 @@ local function createKeySystem()
     -- Main frame
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
-    MainFrame.Size = UDim2.new(1, 0, 0, 250) -- Increased height
+    MainFrame.Size = UDim2.new(1, 0, 0, 230) -- Increased height
     MainFrame.Position = UDim2.new(0.5, 0, 0.4, 0) -- Adjusted position
     MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
     MainFrame.BackgroundColor3 = mainBackgroundColor
@@ -473,21 +473,21 @@ local function createKeySystem()
     local AnimatedStroke = Instance.new("UIStroke")
     AnimatedStroke.Name = "AnimatedStroke"
     AnimatedStroke.Color = Color3.fromRGB(255, 255, 255)
-    AnimatedStroke.Thickness = 3
-    AnimatedStroke.Transparency = 0.5
+    AnimatedStroke.Thickness = 4
+    AnimatedStroke.Transparency = 0.2
     AnimatedStroke.Parent = MainFrame
 
     -- Glow UIStroke
     local GlowStroke = Instance.new("UIStroke")
     GlowStroke.Name = "GlowStroke"
     GlowStroke.Color = accentColor
-    GlowStroke.Thickness = 5
-    GlowStroke.Transparency = 0.5
+    GlowStroke.Thickness = 6
+    GlowStroke.Transparency = 0.3
     GlowStroke.Parent = MainFrame
 
     -- Corner rounding for MainFrame
     local UICorner = Instance.new("UICorner")
-    UICorner.CornerRadius = UDim.new(0, 10)
+    UICorner.CornerRadius = UDim.new(0, 14)
     UICorner.Parent = MainFrame
 
     -- Animated Background Gradient
@@ -508,7 +508,7 @@ local function createKeySystem()
     -- Drop shadow
     local Shadow = Instance.new("ImageLabel")
     Shadow.Name = "Shadow"
-    Shadow.Image = "rbxassetid://136594051610314"
+    Shadow.Image = "rbxassetid://1316045217"
     Shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
     Shadow.ImageTransparency = 0.8
     Shadow.ScaleType = Enum.ScaleType.Slice
@@ -526,7 +526,7 @@ local function createKeySystem()
     TitleImage.AnchorPoint = Vector2.new(0.5, 0.5)
     TitleImage.Position = UDim2.new(0.5, 0, 0.2, 0)
     TitleImage.BackgroundTransparency = 1
-    TitleImage.Image = "rbxassetid://13659405161"
+    TitleImage.Image = "rbxassetid://136594051610314"
     TitleImage.ScaleType = Enum.ScaleType.Fit
     TitleImage.Parent = MainFrame
 
@@ -548,7 +548,7 @@ local function createKeySystem()
 
     -- Corner rounding for text box
     local KeyBoxCorner = Instance.new("UICorner")
-    KeyBoxCorner.CornerRadius = UDim.new(0, 8)
+    KeyBoxCorner.CornerRadius = UDim.new(0, 10)
     KeyBoxCorner.Parent = KeyBox
 
     -- Button container
@@ -591,7 +591,7 @@ local function createKeySystem()
 
     -- Corner rounding for buttons
     local ButtonCorner = Instance.new("UICorner")
-    ButtonCorner.CornerRadius = UDim.new(0, 8)
+    ButtonCorner.CornerRadius = UDim.new(0, 10)
     ButtonCorner.Parent = CheckButton
     ButtonCorner:Clone().Parent = GetKeyButton
 
@@ -610,7 +610,7 @@ local function createKeySystem()
 
     -- Corner rounding for Discord button
     local DiscordCorner = Instance.new("UICorner")
-    DiscordCorner.CornerRadius = UDim.new(0, 8)
+    DiscordCorner.CornerRadius = UDim.new(0, 10)
     DiscordCorner.Parent = DiscordButton
 
     -- Status frame (now a sibling of MainFrame)
@@ -618,7 +618,7 @@ local function createKeySystem()
     StatusFrame.Name = "StatusFrame"
     StatusFrame.Size = UDim2.new(1, 0, 0, 35)
     StatusFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-    StatusFrame.Position = UDim2.new(0.5, 0, 0.77, 0) -- Lowered the position to reduce the gap
+    StatusFrame.Position = UDim2.new(0.5, 0, 0.87, 0) -- Lowered the position to reduce the gap
     StatusFrame.BackgroundColor3 = mainBackgroundColor
     StatusFrame.BorderSizePixel = 0
     StatusFrame.ClipsDescendants = true
@@ -628,20 +628,20 @@ local function createKeySystem()
     local StatusAnimatedStroke = Instance.new("UIStroke")
     StatusAnimatedStroke.Name = "AnimatedStroke"
     StatusAnimatedStroke.Color = Color3.fromRGB(255, 255, 255)
-    StatusAnimatedStroke.Thickness = 3
-    StatusAnimatedStroke.Transparency = 0.5
+    StatusAnimatedStroke.Thickness = 4
+    StatusAnimatedStroke.Transparency = 0.2
     StatusAnimatedStroke.Parent = StatusFrame
 
     local StatusGlowStroke = Instance.new("UIStroke")
     StatusGlowStroke.Name = "GlowStroke"
     StatusGlowStroke.Color = accentColor
-    StatusGlowStroke.Thickness = 5
-    StatusGlowStroke.Transparency = 0.5
+    StatusGlowStroke.Thickness = 6
+    StatusGlowStroke.Transparency = 0.3
     StatusGlowStroke.Parent = StatusFrame
     
     -- Corner rounding for the new status frame
     local StatusUICorner = Instance.new("UICorner")
-    StatusUICorner.CornerRadius = UDim.new(0, 8)
+    StatusUICorner.CornerRadius = UDim.new(0, 20)
     StatusUICorner.Parent = StatusFrame
 
     -- Status label (now a child of StatusFrame)
