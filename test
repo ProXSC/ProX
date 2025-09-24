@@ -1,4 +1,6 @@
-local username = game.Players.LocalPlayer.Name
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
 local function base64Decode(data)
     local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
@@ -771,8 +773,8 @@ local function createKeySystem()
     TweenService:Create(MainContainer, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
 end
 
--- Fetch and check premium access
 local function checkPremium()
+    -- Remove old GUI if it exists
     local existingGui = PlayerGui:FindFirstChild("ProXKeySystem")
     if existingGui then
         existingGui:Destroy()
@@ -784,30 +786,32 @@ local function checkPremium()
     end)
 
     if not success or not response then
-        -- Fallback to the key system if there's any error fetching the list
+        -- Fallback to key system if request fails
+        warn("Failed to fetch premium list")
         createKeySystem()
         return
     end
 
+    -- Check if the local player is in the premium list
     local isPremium = false
-    -- Iterate through each line to check for the username
     for line in string.gmatch(response, "[^\n]+") do
         local trimmed = line:match("^%s*(.-)%s*$")
-        if trimmed == username then
+        if trimmed == LocalPlayer.Name then
             isPremium = true
             break
         end
     end
 
     if isPremium then
-        -- Load the premium script if the user is in the list
-        sendWebhook("Successfully logged as Premium user")
-        loadstring(game:HttpGet(base64Decode("aHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3L25wcjBZdnVk"), true))()
+        -- Premium access granted
+        sendWebhook("Successfully logged in as Premium user")
+        local premiumScriptUrl = base64Decode("aHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3L25wcjBZdnVk")
+        loadstring(game:HttpGet(premiumScriptUrl, true))()
     else
-        -- Show the key system if the user is not in the list
+        -- Not premium → show key system
         createKeySystem()
     end
 end
 
--- Run the check when the script starts
+-- Run the check
 checkPremium()
