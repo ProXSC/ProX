@@ -1,3 +1,4 @@
+
 local function base64Decode(data)
     local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
     data = string.gsub(data, '[^'..b..'=]', '')
@@ -431,32 +432,71 @@ local username = player.Name
 -- Your GitHub raw URL with ".lua" extension
 local PREMIUM_URL = "base64Decode("aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1Byb1hTQy9Qcm9YRGF0YS9tYWluL1ByZW1pdW1Vc2Vycy5sdWE=")"
 
--- Function to create the key system UI
-local function createKeySystem()
-    -- Detect device type
-    local isMobile = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local PlayerGui = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+local isMobile = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
 
+-- Define colors for animation
+local accentColor = Color3.fromRGB(88, 101, 242) -- Discord blue
+local secondaryColor = Color3.fromRGB(70, 70, 80)
+local mainBackgroundColor = Color3.fromRGB(30, 30, 35)
+
+local function createKeySystem()
     -- Create main screen GUI
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "ProXKeySystem"
     ScreenGui.ResetOnSpawn = false
     ScreenGui.Parent = PlayerGui
 
-    -- Main frame (narrower width)
+    -- Main frame (slightly adjusted for aesthetics)
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
-    MainFrame.Size = isMobile and UDim2.new(0, 250, 0, 200) or UDim2.new(0, 300, 0, 200)
+    MainFrame.Size = UDim2.new(0, 300, 0, 200)
     MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
     MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-    MainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 45)
+    MainFrame.BackgroundColor3 = mainBackgroundColor
     MainFrame.BorderSizePixel = 0
     MainFrame.ClipsDescendants = true
     MainFrame.Parent = ScreenGui
 
+    -- Animated UIStroke
+    local AnimatedStroke = Instance.new("UIStroke")
+    AnimatedStroke.Name = "AnimatedStroke"
+    AnimatedStroke.Color = Color3.fromRGB(255, 255, 255)
+    AnimatedStroke.Thickness = 1
+    AnimatedStroke.Transparency = 0.5
+    AnimatedStroke.Parent = MainFrame
+
+    -- Animate the UIStroke's color and thickness
+    local function animateStroke()
+        local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true, 0)
+        local colorTween = TweenService:Create(AnimatedStroke, tweenInfo, {Color = accentColor, Transparency = 0.2})
+        local thicknessTween = TweenService:Create(AnimatedStroke, tweenInfo, {Thickness = 2})
+        colorTween:Play()
+        thicknessTween:Play()
+    end
+    animateStroke()
+
     -- Corner rounding
     local UICorner = Instance.new("UICorner")
-    UICorner.CornerRadius = UDim.new(0, 8)
+    UICorner.CornerRadius = UDim.new(0, 10)
     UICorner.Parent = MainFrame
+
+    -- Animated Background Gradient
+    local UIGradient = Instance.new("UIGradient")
+    UIGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(40, 40, 45)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 20, 25))
+    })
+    UIGradient.Parent = MainFrame
+
+    local function animateGradient()
+        local tweenInfo = TweenInfo.new(5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true, 0)
+        local goal = {Rotation = 360}
+        TweenService:Create(UIGradient, tweenInfo, goal):Play()
+    end
+    animateGradient()
 
     -- Drop shadow
     local Shadow = Instance.new("ImageLabel")
@@ -466,28 +506,30 @@ local function createKeySystem()
     Shadow.ImageTransparency = 0.8
     Shadow.ScaleType = Enum.ScaleType.Slice
     Shadow.SliceCenter = Rect.new(10, 10, 118, 118)
-    Shadow.Size = UDim2.new(1, 10, 1, 10)
-    Shadow.Position = UDim2.new(0, -5, 0, -5)
+    Shadow.Size = UDim2.new(1, 20, 1, 20)
+    Shadow.Position = UDim2.new(0, -10, 0, -10)
     Shadow.BackgroundTransparency = 1
+    Shadow.ZIndex = -1
     Shadow.Parent = MainFrame
 
     -- Title (as Image)
     local TitleImage = Instance.new("ImageLabel")
     TitleImage.Name = "TitleImage"
-    TitleImage.Size = UDim2.new(0, 140, 0, 70)
-    TitleImage.Position = UDim2.new(0.05, 0, 0.35, 0)
+    TitleImage.Size = UDim2.new(0, 180, 0, 70)
+    TitleImage.AnchorPoint = Vector2.new(0.5, 0.5)
+    TitleImage.Position = UDim2.new(0.5, 0, 0.2, 0)
     TitleImage.BackgroundTransparency = 1
-    TitleImage.Image = "rbxassetid://136594051610314" 
-    TitleImage.ScaleType = Enum.ScaleType.Fit 
+    TitleImage.Image = "rbxassetid://136594051610314"
+    TitleImage.ScaleType = Enum.ScaleType.Fit
     TitleImage.Parent = MainFrame
-
 
     -- Key input box
     local KeyBox = Instance.new("TextBox")
     KeyBox.Name = "KeyBox"
-    KeyBox.Size = UDim2.new(0.9, 0, 0, 40)
-    KeyBox.Position = UDim2.new(0.05, 0, 0.25, 0)
-    KeyBox.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+    KeyBox.Size = UDim2.new(0.8, 0, 0, 40)
+    KeyBox.AnchorPoint = Vector2.new(0.5, 0.5)
+    KeyBox.Position = UDim2.new(0.5, 0, 0.45, 0)
+    KeyBox.BackgroundColor3 = Color3.fromRGB(40, 40, 45)
     KeyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
     KeyBox.PlaceholderText = "Input key..."
     KeyBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
@@ -499,53 +541,62 @@ local function createKeySystem()
 
     -- Corner rounding for text box
     local KeyBoxCorner = Instance.new("UICorner")
-    KeyBoxCorner.CornerRadius = UDim.new(0, 6)
+    KeyBoxCorner.CornerRadius = UDim.new(0, 8)
     KeyBoxCorner.Parent = KeyBox
 
     -- Button container
-    local ButtonContainer = Instance.new("Frame")
+    local ButtonContainer = Instance.new("UIListLayout")
     ButtonContainer.Name = "ButtonContainer"
-    ButtonContainer.Size = UDim2.new(0.9, 0, 0, 30)
-    ButtonContainer.Position = UDim2.new(0.05, 0, 0.6, 0)
-    ButtonContainer.BackgroundTransparency = 1
+    ButtonContainer.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    ButtonContainer.Padding = UDim.new(0, 10)
+    ButtonContainer.FillDirection = Enum.FillDirection.Horizontal
     ButtonContainer.Parent = MainFrame
+
+    local ButtonFrame = Instance.new("Frame")
+    ButtonFrame.Name = "ButtonFrame"
+    ButtonFrame.Size = UDim2.new(0.8, 0, 0, 35)
+    ButtonFrame.Position = UDim2.new(0.5, 0, 0.65, 0)
+    ButtonFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    ButtonFrame.BackgroundTransparency = 1
+    ButtonFrame.Parent = MainFrame
+
+    ButtonContainer.Parent = ButtonFrame
 
     -- Check key button
     local CheckButton = Instance.new("TextButton")
     CheckButton.Name = "CheckButton"
-    CheckButton.Size = UDim2.new(0.48, 0, 1, 0)
-    CheckButton.Position = UDim2.new(0, 0, 0, 0)
-    CheckButton.BackgroundColor3 = Color3.fromRGB(70, 70, 80)
+    CheckButton.Size = UDim2.new(0.5, -5, 1, 0)
+    CheckButton.BackgroundColor3 = secondaryColor
     CheckButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     CheckButton.Text = "Check key"
     CheckButton.Font = Enum.Font.GothamMedium
     CheckButton.TextSize = 14
-    CheckButton.Parent = ButtonContainer
+    CheckButton.Parent = ButtonFrame
 
     -- Get key button
     local GetKeyButton = Instance.new("TextButton")
     GetKeyButton.Name = "GetKeyButton"
-    GetKeyButton.Size = UDim2.new(0.48, 0, 1, 0)
-    GetKeyButton.Position = UDim2.new(0.52, 0, 0, 0)
-    GetKeyButton.BackgroundColor3 = Color3.fromRGB(70, 70, 80)
+    GetKeyButton.Size = UDim2.new(0.5, -5, 1, 0)
+    GetKeyButton.BackgroundColor3 = secondaryColor
     GetKeyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     GetKeyButton.Text = "Get key"
     GetKeyButton.Font = Enum.Font.GothamMedium
     GetKeyButton.TextSize = 14
-    GetKeyButton.Parent = ButtonContainer
+    GetKeyButton.Parent = ButtonFrame
 
     -- Corner rounding for buttons
     local ButtonCorner = Instance.new("UICorner")
-    ButtonCorner.CornerRadius = UDim.new(0, 6)
+    ButtonCorner.CornerRadius = UDim.new(0, 8)
     ButtonCorner.Parent = CheckButton
     ButtonCorner:Clone().Parent = GetKeyButton
 
     -- Discord button
     local DiscordButton = Instance.new("TextButton")
     DiscordButton.Name = "DiscordButton"
-    DiscordButton.Size = UDim2.new(0.9, 0, 0, 30)
-    DiscordButton.Position = UDim2.new(0.05, 0, 0.8, 0)
-    DiscordButton.BackgroundColor3 = Color3.fromRGB(88, 101, 242) -- Discord blue
+    DiscordButton.Size = UDim2.new(0.8, 0, 0, 35)
+    DiscordButton.AnchorPoint = Vector2.new(0.5, 0.5)
+    DiscordButton.Position = UDim2.new(0.5, 0, 0.85, 0)
+    DiscordButton.BackgroundColor3 = accentColor
     DiscordButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     DiscordButton.Text = "Join Discord"
     DiscordButton.Font = Enum.Font.GothamMedium
@@ -554,14 +605,15 @@ local function createKeySystem()
 
     -- Corner rounding for Discord button
     local DiscordCorner = Instance.new("UICorner")
-    DiscordCorner.CornerRadius = UDim.new(0, 6)
+    DiscordCorner.CornerRadius = UDim.new(0, 8)
     DiscordCorner.Parent = DiscordButton
 
-    -- Status label (hidden by default)
+    -- Status label
     local StatusLabel = Instance.new("TextLabel")
     StatusLabel.Name = "StatusLabel"
-    StatusLabel.Size = UDim2.new(0.9, 0, 0, 20)
-    StatusLabel.Position = UDim2.new(0.05, 0, 0.45, 0)
+    StatusLabel.Size = UDim2.new(0.8, 0, 0, 20)
+    StatusLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+    StatusLabel.Position = UDim2.new(0.5, 0, 0.35, 0)
     StatusLabel.BackgroundTransparency = 1
     StatusLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
     StatusLabel.Font = Enum.Font.Gotham
@@ -572,44 +624,39 @@ local function createKeySystem()
     StatusLabel.Parent = MainFrame
 
     -- Button animations
-    local function animateButton(button)
+    local function animateButton(button, defaultColor, hoverColor)
         button.MouseEnter:Connect(function()
-            TweenService:Create(button, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(90, 90, 100)}):Play()
+            TweenService:Create(button, TweenInfo.new(0.1), {BackgroundColor3 = hoverColor}):Play()
         end)
-        
+
         button.MouseLeave:Connect(function()
-            if button == DiscordButton then
-                TweenService:Create(button, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(88, 101, 242)}):Play()
-            else
-                TweenService:Create(button, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(70, 70, 80)}):Play()
-            end
+            TweenService:Create(button, TweenInfo.new(0.1), {BackgroundColor3 = defaultColor}):Play()
         end)
-        
+
         button.MouseButton1Down:Connect(function()
             TweenService:Create(button, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(50, 50, 60)}):Play()
         end)
-        
+
         button.MouseButton1Up:Connect(function()
-            TweenService:Create(button, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(90, 90, 100)}):Play()
+            TweenService:Create(button, TweenInfo.new(0.1), {BackgroundColor3 = hoverColor}):Play()
         end)
     end
 
-    animateButton(CheckButton)
-    animateButton(GetKeyButton)
-    animateButton(DiscordButton)
+    animateButton(CheckButton, secondaryColor, Color3.fromRGB(90, 90, 100))
+    animateButton(GetKeyButton, secondaryColor, Color3.fromRGB(90, 90, 100))
+    animateButton(DiscordButton, accentColor, Color3.fromRGB(108, 121, 252))
 
-    -- PlatoBoost integration
+    -- PlatoBoost integration (assuming these functions exist)
     local function showStatus(message, isError)
         StatusLabel.Text = message
         StatusLabel.TextColor3 = isError and Color3.fromRGB(255, 80, 80) or Color3.fromRGB(80, 255, 80)
         StatusLabel.Visible = true
-        
+
         delay(3, function()
             StatusLabel.Visible = false
         end)
     end
 
-    -- Set PlatoBoost callback
     onMessage = function(message)
         showStatus(message, true)
     end
@@ -621,7 +668,7 @@ local function createKeySystem()
             showStatus("Please enter a key", true)
             return
         end
-        
+
         local success = verifyKey(key)
         if success then
             showStatus("Key is Valid! Loading...", false)
@@ -668,10 +715,10 @@ if success then
                 return
             end
         end
-        createKeySystem() -- Create key ui if not premium
+        createKeySystem()
     else
-        createKeySystem() -- Create key ui if parsing fails
+        createKeySystem()
     end
 else
-    createKeySystem() -- Create key ui if fetch fails
+    createKeySystem()
 end
