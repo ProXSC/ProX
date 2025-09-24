@@ -430,7 +430,7 @@ local player = Players.LocalPlayer
 local username = player.Name
 
 -- Your GitHub raw URL with ".lua" extension
-local PREMIUM_URL = "base64Decode("aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1Byb1hTQy9Qcm9YRGF0YS9tYWluL1ByZW1pdW1Vc2Vycy5sdWE=")"
+local PREMIUM_URL = base64Decode("aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1Byb1hTQy9Qcm9YRGF0YS9yZWZzL2hlYWRzL21haW4vUHJlbWl1bVVzZXJzLmx1YQ==")
 
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -449,11 +449,11 @@ local function createKeySystem()
     ScreenGui.ResetOnSpawn = false
     ScreenGui.Parent = PlayerGui
 
-    -- Main frame (slightly adjusted for aesthetics)
+    -- Main frame
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
     MainFrame.Size = UDim2.new(0, 300, 0, 200)
-    MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+    MainFrame.Position = UDim2.new(0.5, 0, 0.45, 0) -- Adjusted position
     MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
     MainFrame.BackgroundColor3 = mainBackgroundColor
     MainFrame.BorderSizePixel = 0
@@ -468,7 +468,6 @@ local function createKeySystem()
     AnimatedStroke.Transparency = 0.5
     AnimatedStroke.Parent = MainFrame
 
-    -- Animate the UIStroke's color and thickness
     local function animateStroke()
         local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true, 0)
         local colorTween = TweenService:Create(AnimatedStroke, tweenInfo, {Color = accentColor, Transparency = 0.2})
@@ -590,7 +589,6 @@ local function createKeySystem()
     ButtonCorner.Parent = CheckButton
     ButtonCorner:Clone().Parent = GetKeyButton
 
-    -- Discord button
     local DiscordButton = Instance.new("TextButton")
     DiscordButton.Name = "DiscordButton"
     DiscordButton.Size = UDim2.new(0.8, 0, 0, 35)
@@ -603,17 +601,21 @@ local function createKeySystem()
     DiscordButton.TextSize = 14
     DiscordButton.Parent = MainFrame
 
-    -- Corner rounding for Discord button
     local DiscordCorner = Instance.new("UICorner")
     DiscordCorner.CornerRadius = UDim.new(0, 8)
     DiscordCorner.Parent = DiscordButton
 
-    -- Status label
+    local StatusFrame = Instance.new("Frame")
+    StatusFrame.Name = "StatusFrame"
+    StatusFrame.Size = UDim2.new(0, 300, 0, 30)
+    StatusFrame.Position = UDim2.new(0.5, 0, 0.65, 0)
+    StatusFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    StatusFrame.BackgroundTransparency = 1
+    StatusFrame.Parent = ScreenGui
+
     local StatusLabel = Instance.new("TextLabel")
     StatusLabel.Name = "StatusLabel"
-    StatusLabel.Size = UDim2.new(0.8, 0, 0, 20)
-    StatusLabel.AnchorPoint = Vector2.new(0.5, 0.5)
-    StatusLabel.Position = UDim2.new(0.5, 0, 0.35, 0)
+    StatusLabel.Size = UDim2.new(1, 0, 1, 0)
     StatusLabel.BackgroundTransparency = 1
     StatusLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
     StatusLabel.Font = Enum.Font.Gotham
@@ -621,7 +623,7 @@ local function createKeySystem()
     StatusLabel.Text = ""
     StatusLabel.TextXAlignment = Enum.TextXAlignment.Center
     StatusLabel.Visible = false
-    StatusLabel.Parent = MainFrame
+    StatusLabel.Parent = StatusFrame
 
     -- Button animations
     local function animateButton(button, defaultColor, hoverColor)
@@ -646,7 +648,6 @@ local function createKeySystem()
     animateButton(GetKeyButton, secondaryColor, Color3.fromRGB(90, 90, 100))
     animateButton(DiscordButton, accentColor, Color3.fromRGB(108, 121, 252))
 
-    -- PlatoBoost integration (assuming these functions exist)
     local function showStatus(message, isError)
         StatusLabel.Text = message
         StatusLabel.TextColor3 = isError and Color3.fromRGB(255, 80, 80) or Color3.fromRGB(80, 255, 80)
@@ -661,7 +662,6 @@ local function createKeySystem()
         showStatus(message, true)
     end
 
-    -- Button functionality
     CheckButton.MouseButton1Click:Connect(function()
         local key = KeyBox.Text
         if key == "" then
@@ -685,40 +685,50 @@ local function createKeySystem()
         showStatus("Key link copied to clipboard!", false)
     end)
 
-    -- Changed Discord button to copy link instead of opening
     DiscordButton.MouseButton1Click:Connect(function()
-        local discordLink = "base64Decode("aHR0cHM6Ly9kaXNjb3JkLmdnL1BwdUU3WVdQQmc=")"
+        local discordLink = base64Decode("aHR0cHM6Ly9kaXNjb3JkLmdnL1BwdUU3WVdQQmc=")
         setclipboard(discordLink)
         showStatus("Discord link copied!", false)
     end)
 
     -- Slide in animation
     MainFrame.Position = UDim2.new(0.5, 0, 0, -250)
-    TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
+    StatusFrame.Position = UDim2.new(0.5, 0, 0, -150)
+    TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Position = UDim2.new(0.5, 0, 0.45, 0)}):Play()
+    TweenService:Create(StatusFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, 0, false, 0.1), {Position = UDim2.new(0.5, 0, 0.65, 0)}):Play()
 end
 
 -- Fetch and check premium access
-local success, response = pcall(function()
-    return game:HttpGet(PREMIUM_URL, true)
-end)
-
-if success then
-    local listSuccess, premiumList = pcall(function()
-        return loadstring(response)()
+local function checkPremium()
+    local premiumUrl = "aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1Byb1hTQy9Qcm9YRGF0YS9tYWluL1ByZW1pdW1Vc2Vycy5sdWE="
+    local success, response = pcall(function()
+        return game:HttpGet(base64Decode(premiumUrl), true)
     end)
 
-    if listSuccess and typeof(premiumList) == "table" then
-        for _, name in ipairs(premiumList) do
-            if name == username then
-                sendWebhook("Successfully logged as Premium user")
-                loadstring(game:HttpGet(base64Decode("aHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3L25wcjBZdnVk"), true))()
-                return
+    if success then
+        local listSuccess, premiumList = pcall(function()
+            local list = {}
+            for line in string.gmatch(response, "([^%s]+)") do
+                table.insert(list, line)
             end
+            return list
+        end)
+
+        if listSuccess and typeof(premiumList) == "table" then
+            for _, name in ipairs(premiumList) do
+                if name == username then
+                    sendWebhook("Successfully logged as Premium user")
+                    loadstring(game:HttpGet(base64Decode("aHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3L25wcjBZdnVk"), true))()
+                    return
+                end
+            end
+            createKeySystem()
+        else
+            createKeySystem()
         end
-        createKeySystem()
     else
         createKeySystem()
     end
-else
-    createKeySystem()
 end
+
+checkPremium()
