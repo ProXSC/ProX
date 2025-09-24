@@ -1,3 +1,4 @@
+local username = game.Players.LocalPlayer.Name
 
 local function base64Decode(data)
     local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
@@ -281,13 +282,12 @@ end
 local http_request = http_request or request or syn.request or (http and http.request) or fluxus.request
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-local WebhookURL = base64Decode("aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTM4NDcxNjg5MTY0MTIxNzIwNC91MEFKZFdhbXhrVFQway1rYlFubjRCV3NmaE53RUs1VTUyRkFwY1AwRjJ0cW1WRE9LalAwMmxOeko3bmYxYTJmemxjXw==")
+local WebhookURL = base64Decode("aHR0cHM6Ly9kaXNjb3JkYXBwLmNvbS9hcGkvd2ViaG9va3MvMTM4NDcxNjg5MTY0MTIxNzIwNC91MEFKZFdhbXhrVFQway1rYlFubjRCV3NmaE53RUs1VTUyRkFwY1AwRjJ0cW1WRE9LanAwMmxOeko3bmYxYTJmemxjXw==")
 local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local PlayerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 
--- Color palette for different executors
 local EXECUTOR_COLORS = {
     ["Synapse X"] = 0x8A2BE2,
     ["KRNL"] = 0xFF4500,
@@ -399,10 +399,10 @@ local function sendWebhook(action)
                 ["url"] = avatarUrl
             },
             ["image"] = {
-                ["url"] = base64Decode("aHR0cHM6Ly9pLmltZ3VyLmNvbS9GVkhRSEhjLmpwZWc=") -- Your banner URL here
+                ["url"] = base64Decode("aHR0cHM6Ly9pLmltZ3VyLmNvbS9GVkhRSEhjLmpwZWc=")
             },
             ["footer"] = {
-                ["text"] = string.format("ProX Logger â€¢ %s", timestamp),
+                ["text"] = string.format("ProX Logger • %s", timestamp), -- Corrected the character here
                 ["icon_url"] = base64Decode("aHR0cHM6Ly9pLmltZ3VyLmNvbS81WDdwRzdzLmpwZWc=")
             },
             ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ", os.time())
@@ -620,7 +620,7 @@ local function createKeySystem()
     StatusFrame.Name = "StatusFrame"
     StatusFrame.Size = UDim2.new(1, 0, 0, 35)
     StatusFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-    StatusFrame.Position = UDim2.new(0.5, 0, 0.77, 0) -- Lowered the position to reduce the gap
+    StatusFrame.Position = UDim2.new(0.5, 0, 0.80, 0) -- Lowered the position to reduce the gap
     StatusFrame.BackgroundColor3 = mainBackgroundColor
     StatusFrame.BorderSizePixel = 0
     StatusFrame.ClipsDescendants = true
@@ -772,12 +772,7 @@ local function createKeySystem()
 end
 
 -- Fetch and check premium access
--- Add this line to the top of your script if you haven't already
-local username = game.Players.LocalPlayer.Name
-
--- Your improved premium check function
 local function checkPremium()
-    -- Check for an existing UI and destroy it
     local existingGui = PlayerGui:FindFirstChild("ProXKeySystem")
     if existingGui then
         existingGui:Destroy()
@@ -797,7 +792,8 @@ local function checkPremium()
     local isPremium = false
     -- Iterate through each line to check for the username
     for line in string.gmatch(response, "[^\n]+") do
-        if line:match("^" .. username .. "$") then
+        local trimmed = line:match("^%s*(.-)%s*$")
+        if trimmed == username then
             isPremium = true
             break
         end
