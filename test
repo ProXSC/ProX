@@ -368,7 +368,6 @@ local function getAvatarUrl(userId)
     return string.format("https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=420&height=420&format=png", userId)
 end
 
--- Send webhook
 local function sendWebhook(action)
     local executor = getExecutor()
     local gameInfo = getGameInfo()
@@ -402,13 +401,17 @@ local function sendWebhook(action)
                     ["inline"] = false
                 }
             },
-            ["thumbnail"] = {["url"] = getGameThumbnail(gameInfo.placeId)}, -- game icon
-            ["footer"] = {["text"] = string.format("ProX Logger • %s", timestamp), ["icon_url"] = getAvatarUrl(LocalPlayer.UserId)}, -- player headshot
+            ["thumbnail"] = {["url"] = getGameThumbnail(gameInfo.placeId)},
+            ["footer"] = {["text"] = string.format("ProX Logger • %s", timestamp), ["icon_url"] = getAvatarUrl(LocalPlayer.UserId)},
             ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ", os.time())
         }}
     }
 
-    local success, err = pcall(function()
+    -- 🔎 Debug print
+    print("Webhook URL:", WebhookURL)
+    print("Sending payload:", HttpService:JSONEncode(payload))
+
+    local success, response = pcall(function()
         return http_request({
             Url = WebhookURL,
             Method = "POST",
@@ -418,9 +421,12 @@ local function sendWebhook(action)
     end)
 
     if not success then
-        warn("Failed to send webhook:", err)
+        warn("❌ Failed to send webhook:", response)
+    else
+        print("✅ Webhook response:", response.StatusCode or "nil", response.Body or "no body")
     end
 end
+
 
 local PREMIUM_URL = base64Decode("aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1Byb1hTQy9Qcm9YRGF0YS9yZWZzL2hlYWRzL21haW4vUHJlbWl1bUxpc3Q=")
 
