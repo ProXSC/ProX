@@ -281,7 +281,7 @@ local getFlag = function(name)
     end
 end
 
-local http_request = http_request or request or syn.request or (http and http.request) or fluxus.request or (not game:GetService("RunService"):IsStudio() and game:GetService("HttpService"))
+local http_request = http_request or request or (syn and syn.request) or (fluxus and fluxus.request)
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local HttpService = game:GetService("HttpService")
@@ -433,16 +433,15 @@ local function sendWebhook(action)
 
     local success, err = pcall(function()
         if http_request then
-            return http_request({
-                Url = WebhookURL,
-                Method = "POST",
-                Headers = {["Content-Type"] = "application/json"},
-                Body = HttpService:JSONEncode(payload)
-            })
-        else
-            HttpService:PostAsync(WebhookURL, HttpService:JSONEncode(payload))
-            return true, "Used HttpService"
-        end
+    return http_request({
+        Url = WebhookURL,
+        Method = "POST",
+        Headers = {["Content-Type"] = "application/json"},
+        Body = HttpService:JSONEncode(payload)
+    })
+else
+    return HttpService:PostAsync(WebhookURL, HttpService:JSONEncode(payload), Enum.HttpContentType.ApplicationJson)
+end
     end)
 
     if not success then
