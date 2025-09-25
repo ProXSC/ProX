@@ -1,7 +1,6 @@
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local username = player.Name
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
 local function base64Decode(data)
     local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
