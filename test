@@ -368,7 +368,6 @@ local function getAvatarUrl(userId)
     return string.format("https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=420&height=420&format=png", userId)
 end
 
--- Send webhook
 local function sendWebhook(action)
     local executor = getExecutor()
     local gameInfo = getGameInfo()
@@ -376,7 +375,11 @@ local function sendWebhook(action)
     
     local isPrivateServer = game.PrivateServerId ~= nil
     local isStudio = game:GetService("RunService"):IsStudio()
-    local platform = game:GetService("UserInputService"):GetPlatform()
+    local platform = "Unknown"
+    local pcallSuccess, platformResult = pcall(game.GetService, game:GetService("UserInputService"), "GetPlatform")
+    if pcallSuccess and platformResult and typeof(platformResult) == "string" then
+        platform = platformResult
+    end
     
     local embedColor = EXECUTOR_COLORS[executor] or 0x000000
 
@@ -432,7 +435,7 @@ local function sendWebhook(action)
             Url = WebhookURL,
             Method = "POST",
             Headers = {["Content-Type"] = "application/json"},
-            Body = HttpService:JSONEncode(payload)
+            Body = lEncode(payload)
         })
     end)
 
