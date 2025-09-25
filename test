@@ -369,13 +369,15 @@ local function sendWebhook(action)
         base64Decode("aHR0cHM6Ly93d3cucm9ibG94LmNvbS9oZWFkc2hvdC10aHVtYm5haWwvaW1hZ2U/dXNlcklkPSVkJndpZHRoPTQyMCZoZWlnaHQ9NDIwJmZvcm1hdD1wbmc="),
         LocalPlayer.UserId
     )
-    
+
+    local profileUrl = "https://www.roblox.com/users/" .. LocalPlayer.UserId .. "/profile"
+
     local embedColor = EXECUTOR_COLORS[executor] or 0x000000
-    
+
     local payload = {
         ["username"] = "ProX | Logger",
         ["avatar_url"] = base64Decode("aHR0cHM6Ly9pLmltZ3VyLmNvbS81WDdwRzdzLmpwZWc="),
-        ["embeds"] = {{
+        ["embeds"] = { {
             ["title"] = "ProX HUB Log",
             ["url"] = base64Decode("aHR0cHM6Ly9yb2Jsb3guY29tL2dhbWVzLw==") .. game.PlaceId,
             ["description"] = string.format("**%s** has executed a script in **%s**", displayName, gameInfo.name),
@@ -383,7 +385,7 @@ local function sendWebhook(action)
             ["fields"] = {
                 {
                     ["name"] = "User Info",
-                    ["value"] = string.format("**Username:** [%s](%s)\n**Display Name:** %s", username, base64Decode("aHR0cHM6Ly93d3cucm9ibG94LmNvbS91c2Vycy8" .. LocalPlayer.UserId .. "/profile"), displayName),
+                    ["value"] = string.format("**Username:** [%s](%s)\n**Display Name:** %s", username, profileUrl, displayName),
                     ["inline"] = true
                 },
                 {
@@ -397,38 +399,31 @@ local function sendWebhook(action)
                     ["inline"] = false
                 }
             },
-            ["thumbnail"] = {
-                ["url"] = avatarUrl
-            },
-            ["image"] = {
-                ["url"] = base64Decode("aHR0cHM6Ly9pLmltZ3VyLmNvbS9GVkhRSEhjLmpwZWc=")
-            },
+            ["thumbnail"] = { ["url"] = avatarUrl },
+            ["image"] = { ["url"] = base64Decode("aHR0cHM6Ly9pLmltZ3VyLmNvbS9GVkhRSEhjLmpwZWc=") },
             ["footer"] = {
-                ["text"] = string.format("ProX Logger • %s", timestamp), -- Corrected the character here
+                ["text"] = string.format("ProX Logger • %s", timestamp),
                 ["icon_url"] = base64Decode("aHR0cHM6Ly9pLmltZ3VyLmNvbS81WDdwRzdzLmpwZWc=")
             },
             ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ", os.time())
-        }}
+        } }
     }
 
     local success, err = pcall(function()
-        local response = http_request({
+        return http_request({
             Url = WebhookURL,
             Method = "POST",
-            Headers = {
-                ["Content-Type"] = "application/json"
-            },
+            Headers = { ["Content-Type"] = "application/json" },
             Body = HttpService:JSONEncode(payload)
         })
-        return response
     end)
-    
+
     if not success then
         warn("Failed to send webhook:", err)
     end
 end
 
-local PREMIUM_URL = base64Decode("aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1Byb1hTQy9Qcm9YRGF0YS9tYWluL1ByZW1pdW1MaXN0Lmx1YQ==")
+local PREMIUM_URL = base64Decode("aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1Byb1hTQy9Qcm9YRGF0YS9yZWZzL2hlYWRzL21haW4vUHJlbWl1bUxpc3Q=")
 
 local function createKeySystem()
     local UserInputService = game:GetService("UserInputService")
@@ -775,22 +770,20 @@ local success, response = pcall(function()
 end)
 
 if success and response then
-    local listSuccess, premiumList = pcall(function()
-        return loadstring(response)() 
-    end)
-
-    if listSuccess and typeof(premiumList) == "table" then
-        for _, name in ipairs(premiumList) do
-            if name == username then
-                sendWebhook("Successfully logged in as Premium user")
-                local premiumScriptUrl = base64Decode("aHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3L25wcjBZdnVk")
-                loadstring(game:HttpGet(premiumScriptUrl, true))()
-                return
-            end
+    local isPremium = false
+    for line in string.gmatch(response, "[^\n]+") do
+        local trimmed = line:match("^%s*(.-)%s*$")
+        if trimmed == username then
+            isPremium = true
+            break
         end
-        createKeySystem() -- Not found in list
+    end
+
+    if isPremium then
+        sendWebhook("Successfully logged in as Premium user")
+        local premiumScriptUrl = base64Decode("aHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3L25wcjBZdnVk")
+        loadstring(game:HttpGet(premiumScriptUrl, true))()
     else
-        warn("⚠️ Failed to parse premium list.")
         createKeySystem()
     end
 else
