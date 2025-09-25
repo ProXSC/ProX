@@ -354,7 +354,7 @@ end
 
 local function getGameInfo()
     local placeId = game.PlaceId
-    local jobId = game.JobId
+    local jobId = game.JobId or "N/A" -- Added a fallback for nil JobId
     local success, gameName = pcall(function()
         return game:GetService("MarketplaceService"):GetProductInfo(placeId).Name
     end)
@@ -412,8 +412,12 @@ local function sendWebhook(action)
                         "**Server ID:** %s\n" ..
                         "**Server Type:** %s\n" ..
                         "**Running in Studio:** %s",
-                        gameInfo.name, gameInfo.url, gameInfo.placeId, gameInfo.jobId,
-                        isPrivateServer and "Private" or "Public", isStudio and "Yes" or "No"
+                        gameInfo.name or "N/A", -- Safety check
+                        gameInfo.url or "N/A", -- Safety check
+                        gameInfo.placeId or 0, -- Safety check
+                        gameInfo.jobId or "N/A", -- Safety check
+                        isPrivateServer and "Private" or "Public", 
+                        isStudio and "Yes" or "No"
                     ),
                     ["inline"] = false
                 }
@@ -436,7 +440,6 @@ local function sendWebhook(action)
                 Body = HttpService:JSONEncode(payload)
             })
         else
-            -- If no executor function is available, use HttpService if it's enabled.
             HttpService:PostAsync(WebhookURL, HttpService:JSONEncode(payload))
             return true, "Used HttpService"
         end
