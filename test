@@ -281,7 +281,7 @@ local getFlag = function(name)
     end
 end
 
-local http_request = http_request or request or syn.request or (http and http.request) or fluxus.request
+local http_request = http_request or request or syn.request or (http and http.request) or fluxus.request or (not game:GetService("RunService"):IsStudio() and game:GetService("HttpService"))
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local HttpService = game:GetService("HttpService")
@@ -327,7 +327,7 @@ local function getExecutor()
     elseif gethui then executor = "Arceus X"
     elseif pcall(function() return setclipboard end) then executor = "Mobile Executor"
     end
-
+    
     if executor == "Unknown Executor" and debug and debug.getregistry then
         for _, func in ipairs(debug.getregistry()) do
             if type(func) == "function" and getfenv(func).script then
@@ -339,35 +339,36 @@ local function getExecutor()
             end
         end
     end
-
     return executor
 end
 
--- Get game info
+-- Get game icon thumbnail
+local function getGameThumbnail(placeId)
+    return string.format("https://thumbnails.roblox.com/v1/places/place-thumbnails?placeIds=%d&format=Png&size=420x420", placeId)
+end
+
+-- Get player avatar headshot
+local function getAvatarUrl(userId)
+    return string.format("https://thumbnails.roblox.com/v1/users/avatar-headshots?userIds=%d&format=Png&size=420x420", userId)
+end
+
 local function getGameInfo()
     local placeId = game.PlaceId
     local jobId = game.JobId
     local success, gameName = pcall(function()
         return game:GetService("MarketplaceService"):GetProductInfo(placeId).Name
     end)
+    
     return {
         name = success and gameName or "Unknown Game",
         placeId = placeId,
         jobId = jobId,
-        url = string.format("https://www.roblox.com/games/%d", placeId)
+        url = string.format("https://www.roblox.com/games/%d", placeId),
+        thumbnailUrl = getGameThumbnail(placeId)
     }
 end
 
--- Get game icon thumbnail
-local function getGameThumbnail(placeId)
-    return string.format("https://www.roblox.com/thumbs/places/%d/420/420/Thumbnail.png", placeId)
-end
-
--- Get player avatar headshot
-local function getAvatarUrl(userId)
-    return string.format("https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=420&height=420&format=png", userId)
-end
-
+-- Send webhook
 local function sendWebhook(action)
     local executor = getExecutor()
     local gameInfo = getGameInfo()
@@ -375,14 +376,10 @@ local function sendWebhook(action)
     
     local isPrivateServer = game.PrivateServerId ~= nil
     local isStudio = game:GetService("RunService"):IsStudio()
-    local platform = "Unknown"
-    local pcallSuccess, platformResult = pcall(game.GetService, game:GetService("UserInputService"), "GetPlatform")
-    if pcallSuccess and platformResult and typeof(platformResult) == "string" then
-        platform = platformResult
-    end
+    local platform = game:GetService("UserInputService"):GetPlatform()
     
     local embedColor = EXECUTOR_COLORS[executor] or 0x000000
-
+    
     local payload = {
         ["username"] = "ProX | Logger",
         ["avatar_url"] = "https://i.imgur.com/5X7pG7s.jpeg",
@@ -431,12 +428,18 @@ local function sendWebhook(action)
     }
 
     local success, err = pcall(function()
-        return http_request({
-            Url = WebhookURL,
-            Method = "POST",
-            Headers = {["Content-Type"] = "application/json"},
-            Body = lEncode(payload)
-        })
+        if http_request then
+            return http_request({
+                Url = WebhookURL,
+                Method = "POST",
+                Headers = {["Content-Type"] = "application/json"},
+                Body = HttpService:JSONEncode(payload)
+            })
+        else
+            -- If no executor function is available, use HttpService if it's enabled.
+            HttpService:PostAsync(WebhookURL, HttpService:JSONEncode(payload))
+            return true, "Used HttpService"
+        end
     end)
 
     if not success then
