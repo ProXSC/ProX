@@ -416,7 +416,7 @@ local function sendWebhook(action)
             Headers = {
                 ["Content-Type"] = "application/json"
             },
-            Body = HttpService:JSONEncode(payload)
+            Body = lEncode(payload) -- This is the key change!
         })
         return response
     end)
