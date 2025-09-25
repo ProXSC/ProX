@@ -395,30 +395,20 @@ local function sendWebhook(action)
                     ["inline"] = false
                 }
             },
-            ["thumbnail"] = {
-                ["url"] = avatarUrl
-            },
-            ["image"] = {
-                ["url"] = "https://i.imgur.com/FVHQHHc.jpeg"
-            },
-            ["footer"] = {
-                ["text"] = string.format("ProX Logger • %s", timestamp),
-                ["icon_url"] = "https://i.imgur.com/5X7pG7s.jpeg"
-            },
+            ["thumbnail"] = {["url"] = avatarUrl},
+            ["image"] = {["url"] = "https://i.imgur.com/FVHQHHc.jpeg"},
+            ["footer"] = {["text"] = string.format("ProX Logger • %s", timestamp), ["icon_url"] = "https://i.imgur.com/5X7pG7s.jpeg"},
             ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ", os.time())
         }}
     }
 
     local success, err = pcall(function()
-        local response = http_request({
+        return http_request({
             Url = WebhookURL,
             Method = "POST",
-            Headers = {
-                ["Content-Type"] = "application/json"
-            },
-            Body = lEncode(payload) -- This is the key change!
+            Headers = {["Content-Type"] = "application/json"},
+            Body = HttpService:JSONEncode(payload)
         })
-        return response
     end)
     
     if not success then
