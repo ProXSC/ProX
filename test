@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+local player = Players.LocalPlayer
+local username = player.Name
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
 local function base64Decode(data)
@@ -428,10 +429,7 @@ local function sendWebhook(action)
     end
 end
 
-local player = Players.LocalPlayer
-local username = player.Name
-
-local PREMIUM_URL = base64Decode("aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1Byb1hTQy9Qcm9YRGF0YS9yZWZzL2hlYWRzL21haW4vUHJlbWl1bVVzZXJzLmx1YQ==")
+local PREMIUM_URL = base64Decode("aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1Byb1hTQy9Qcm9YRGF0YS9tYWluL1ByZW1pdW1MaXN0Lmx1YQ==")
 
 local function createKeySystem()
     local UserInputService = game:GetService("UserInputService")
@@ -773,45 +771,30 @@ local function createKeySystem()
     TweenService:Create(MainContainer, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
 end
 
-local function checkPremium()
-    -- Remove old GUI if it exists
-    local existingGui = PlayerGui:FindFirstChild("ProXKeySystem")
-    if existingGui then
-        existingGui:Destroy()
-    end
+local success, response = pcall(function()
+    return game:HttpGet(PREMIUM_URL, true)
+end)
 
-    local premiumUrl = "https://raw.githubusercontent.com/ProXSC/ProXData/main/PremiumList"
-    local success, response = pcall(function()
-        return game:HttpGet(premiumUrl, true)
+if success and response then
+    local listSuccess, premiumList = pcall(function()
+        return loadstring(response)() 
     end)
 
-    if not success or not response then
-        -- Fallback to key system if request fails
-        warn("Failed to fetch premium list")
-        createKeySystem()
-        return
-    end
-
-    -- Check if the local player is in the premium list
-    local isPremium = false
-    for line in string.gmatch(response, "[^\n]+") do
-        local trimmed = line:match("^%s*(.-)%s*$")
-        if trimmed == LocalPlayer.Name then
-            isPremium = true
-            break
+    if listSuccess and typeof(premiumList) == "table" then
+        for _, name in ipairs(premiumList) do
+            if name == username then
+                sendWebhook("Successfully logged in as Premium user")
+                local premiumScriptUrl = base64Decode("aHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3L25wcjBZdnVk")
+                loadstring(game:HttpGet(premiumScriptUrl, true))()
+                return
+            end
         end
-    end
-
-    if isPremium then
-        -- Premium access granted
-        sendWebhook("Successfully logged in as Premium user")
-        local premiumScriptUrl = base64Decode("aHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3L25wcjBZdnVk")
-        loadstring(game:HttpGet(premiumScriptUrl, true))()
+        createKeySystem() -- Not found in list
     else
-        -- Not premium → show key system
+        warn("⚠️ Failed to parse premium list.")
         createKeySystem()
     end
+else
+    warn("⚠️ Failed to fetch premium list.")
+    createKeySystem()
 end
-
--- Run the check
-checkPremium()
