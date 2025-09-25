@@ -414,7 +414,7 @@ local function sendWebhook(action)
             Url = WebhookURL,
             Method = "POST",
             Headers = { ["Content-Type"] = "application/json" },
-            Body = HttpService:JSONEncode(payload)
+            Body = lEncode(payload)
         })
     end)
 
