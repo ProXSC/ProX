@@ -10,41 +10,41 @@ local movementIcon = "rbxassetid://1553073775"  -- Example: A person icon
 
 -- 1. Initialize the Library with Custom Logo ID
 -- Pass options as a table to set the custom logo image.
-local PROX_Hub = ScriptHubModule:Initialize({
+local ProXLib = ProXLibrary:Initialize({
     logoId = customLogoId
 })
 
 print("PROX Script Hub Initialized successfully with custom logo!")
 
 -- 2. Create Tabs
-local combatTab = PROX_Hub:CreateTab("Combat", combatIcon)
-local movementTab = PROX_Hub:CreateTab("Movement", movementIcon)
+local combatTab = ProXLib:CreateTab("Combat", combatIcon)
+local movementTab = ProXLib:CreateTab("Movement", movementIcon)
 
 -- 3. Populate Combat Tab (Example Elements)
-PROX_Hub:CreateButton(combatTab, "Fire Aimbot", function()
+ProXLib:CreateButton(combatTab, "Fire Aimbot", function()
     print("Combat Button: Aimbot script activated!")
 end)
 
-PROX_Hub:CreateTextBox(combatTab, "Enter Target Name", function(text)
+ProXLib:CreateTextBox(combatTab, "Enter Target Name", function(text)
     print("Combat TextBox: Target filter set to: " .. text)
 end)
 
-PROX_Hub:CreateDropdown(combatTab, "Weapon Select", {"Pistol", "Rifle", "Shotgun"}, function(selection)
+ProXLib:CreateDropdown(combatTab, "Weapon Select", {"Pistol", "Rifle", "Shotgun"}, function(selection)
     print("Combat Dropdown: Selected weapon: " .. selection)
 end)
 
 -- 4. Populate Movement Tab (Example Elements)
 
 -- Jump Power Slider (Min: 50, Max: 200, Initial: 100)
-local jumpPowerSlider = PROX_Hub:CreateSlider(movementTab, "Jump Power", 50, 200, 100, function(value)
-    local humanoid = PROX_Hub.LocalPlayer.Character and PROX_Hub.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+local jumpPowerSlider = ProXLib:CreateSlider(movementTab, "Jump Power", 50, 200, 100, function(value)
+    local humanoid = ProXLib.LocalPlayer.Character and ProXLib.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
     if humanoid then
         humanoid.JumpPower = value
     end
     print("Movement Slider: Jump Power set to: " .. value)
 end)
 
-PROX_Hub:CreateButton(movementTab, "Toggle Noclip", function()
+ProXLib:CreateButton(movementTab, "Toggle Noclip", function()
     print("Movement Button: Noclip Toggled.")
 end)
 
