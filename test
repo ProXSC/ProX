@@ -1,1 +1,52 @@
+-- This is a LocalScript placed in StarterPlayerScripts or similar location.
+-- Assuming 'ScriptHubLibrary.lua' is a ModuleScript named 'ScriptHubLibrary' located in the same container.
 
+local ProXLibrary = loadstring(game:HttpGet("https://gist.githubusercontent.com/ProXSC/4a9bad3ce326855c1021d5f2fa416355/raw/282f217c08d908b217dab0b636bcda142962b023/ProXLibrary"))()
+
+-- Custom Asset IDs for demonstration:
+local customLogoId = "rbxassetid://4977457782" -- Example: A stylized logo ID
+local combatIcon = "rbxassetid://1553073740"  -- Example: A sword icon
+local movementIcon = "rbxassetid://1553073775"  -- Example: A person icon
+
+-- 1. Initialize the Library with Custom Logo ID
+-- Pass options as a table to set the custom logo image.
+local PROX_Hub = ScriptHubModule:Initialize({
+    logoId = customLogoId
+})
+
+print("PROX Script Hub Initialized successfully with custom logo!")
+
+-- 2. Create Tabs
+local combatTab = PROX_Hub:CreateTab("Combat", combatIcon)
+local movementTab = PROX_Hub:CreateTab("Movement", movementIcon)
+
+-- 3. Populate Combat Tab (Example Elements)
+PROX_Hub:CreateButton(combatTab, "Fire Aimbot", function()
+    print("Combat Button: Aimbot script activated!")
+end)
+
+PROX_Hub:CreateTextBox(combatTab, "Enter Target Name", function(text)
+    print("Combat TextBox: Target filter set to: " .. text)
+end)
+
+PROX_Hub:CreateDropdown(combatTab, "Weapon Select", {"Pistol", "Rifle", "Shotgun"}, function(selection)
+    print("Combat Dropdown: Selected weapon: " .. selection)
+end)
+
+-- 4. Populate Movement Tab (Example Elements)
+
+-- Jump Power Slider (Min: 50, Max: 200, Initial: 100)
+local jumpPowerSlider = PROX_Hub:CreateSlider(movementTab, "Jump Power", 50, 200, 100, function(value)
+    local humanoid = PROX_Hub.LocalPlayer.Character and PROX_Hub.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid.JumpPower = value
+    end
+    print("Movement Slider: Jump Power set to: " .. value)
+end)
+
+PROX_Hub:CreateButton(movementTab, "Toggle Noclip", function()
+    print("Movement Button: Noclip Toggled.")
+end)
+
+-- Note: The Settings tab is automatically created during initialization
+-- and includes Theme Selector, WalkSpeed Slider, and Keybind info.
